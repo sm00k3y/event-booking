@@ -25,6 +25,7 @@ mongoose
     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.646yw.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
   )
   .then(() => {
+    console.log("Let's go!");
     app.listen(3000);
   })
   .catch((err) => {

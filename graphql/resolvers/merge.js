@@ -25,11 +25,7 @@ const singleEvent = async (eventId) => {
 const user = async (userId) => {
   try {
     const user = await User.findById(userId);
-    return {
-      ...user._doc,
-      id: user.id,
-      createdEvents: events(user._doc.createdEvents),
-    };
+    return transformUser(user);
   } catch (err) {
     throw err;
   }
@@ -47,11 +43,19 @@ const transformEvent = (event) => {
 const transformBooking = (booking) => {
   return {
     ...booking._doc,
-    id: booking.id,
+    _id: booking.id,
     user: user(booking._doc.user),
     event: singleEvent(booking._doc.event),
     createdAt: dateToString(booking._doc.createdAt),
     updatedAt: dateToString(booking._doc.updatedAt),
+  };
+};
+
+const transformUser = (singleUser) => {
+  return {
+    ...singleUser._doc,
+    _id: singleUser.id,
+    createdEvents: events(singleUser._doc.createdEvents),
   };
 };
 
@@ -60,3 +64,4 @@ const transformBooking = (booking) => {
 // exports.events = events;
 exports.transformEvent = transformEvent;
 exports.transformBooking = transformBooking;
+exports.transformUser = transformUser;

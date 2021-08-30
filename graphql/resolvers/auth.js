@@ -1,12 +1,13 @@
 const bcrypt = require("bcryptjs");
 const User = require("../../models/user");
+const { transformUser } = require("./merge");
 
 module.exports = {
   users: async () => {
     try {
       const users = await User.find();
       return users.map((singleUser) => {
-        return { ...singleUser._doc, _id: singleUser.id };
+        return transformUser(singleUser);
       });
     } catch (err) {
       throw err;
@@ -24,7 +25,7 @@ module.exports = {
         password: hashedPassword,
       });
       const result = await user.save();
-      return { ...result._doc, password: null, id: result.id };
+      return { ...result._doc, password: null, _id: result.id };
     } catch (err) {
       throw err;
     }

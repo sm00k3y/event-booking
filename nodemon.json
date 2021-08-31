@@ -2,6 +2,7 @@
   "env": {
     "MONGO_USER": "JakeDev",
     "MONGO_PASSWORD": "6nxpwiQgVg4rhZu0",
-    "MONGO_DB": "event-booking"
+    "MONGO_DB": "event-booking",
+    "JWT_KEY": "somesupersecretkey"
   }
 }

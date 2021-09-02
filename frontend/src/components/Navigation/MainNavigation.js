@@ -27,6 +27,11 @@ const MainNavigation = () => {
               <NavLink to="/auth">Authentication</NavLink>
             </li>
           )}
+          {loggedUser.token && (
+            <li>
+              <button onClick={loggedUser.logout}>Logout</button>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

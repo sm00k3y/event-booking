@@ -1,7 +1,121 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import authContext from "../context/auth-context";
+import Spinner from "../components/Spinner/Spinner";
+import BookingList from "../components/Bookings/BookingList/BookingList";
 
 const BookingsPage = () => {
-  return <h1>The bookings page!</h1>;
+  const [loading, setLoading] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const loggedUser = useContext(authContext);
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    fetchBookings();
+    return () => {
+      setIsActive(false);
+    };
+  }, []);
+
+  const fetchBookings = () => {
+    console.log("Fetching Bookings...");
+    setLoading(true);
+    const requestBody = {
+      query: `
+        query {
+          bookings {
+            _id
+            createdAt
+            event {
+              _id
+              title
+              date
+            }
+          }
+        }
+      `,
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${loggedUser.token}`,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then((resData) => {
+        const bookings = resData.data.bookings;
+        if (isActive) setBookings(bookings);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .then(() => {
+        if (isActive) setLoading(false);
+      });
+  };
+
+  const cancelBookingHandler = (bookingId) => {
+    setLoading(true);
+    const requestBody = {
+      query: `
+        mutation {
+          cancelBooking(bookingId: "${bookingId}") {
+            _id
+            title
+            date
+          }
+        }
+      `,
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${loggedUser.token}`,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then((resData) => {
+        console.log(resData);
+        if (isActive) {
+          setBookings(
+            bookings.filter((b) => {
+              return b._id !== bookingId;
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .then(() => {
+        if (isActive) setLoading(false);
+      });
+  };
+
+  return (
+    <React.Fragment>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <BookingList bookings={bookings} onCancel={cancelBookingHandler} />
+      )}
+    </React.Fragment>
+  );
 };
 
 export default BookingsPage;

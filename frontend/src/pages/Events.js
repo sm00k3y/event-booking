@@ -16,6 +16,7 @@ const EventsPage = () => {
   const loggedUser = useContext(authContext);
   const [loading, setLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isActive, setIsActive] = useState(true);
 
   const fetchEvents = () => {
     setLoading(true);
@@ -52,20 +53,22 @@ const EventsPage = () => {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         const events = resData.data.events;
-        setEvents(events);
+        if (isActive) setEvents(events);
       })
       .catch((err) => {
         console.log(err);
       })
       .then(() => {
-        setLoading(false);
+        if (isActive) setLoading(false);
       });
   };
 
   useEffect(() => {
     fetchEvents();
+    return () => {
+      setIsActive(false);
+    };
   }, []);
 
   const startCreateEventHandler = () => {

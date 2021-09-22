@@ -2,12 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import authContext from "../context/auth-context";
 import Spinner from "../components/Spinner/Spinner";
 import BookingList from "../components/Bookings/BookingList/BookingList";
+import BookingChart from "../components/Bookings/BookingChart/BookingChart";
+import BookingControls from "../components/Bookings/BookingControls/BookingControls";
 
 const BookingsPage = () => {
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState([]);
   const loggedUser = useContext(authContext);
   const [isActive, setIsActive] = useState(true);
+  const [outputType, setOutputType] = useState("list");
 
   useEffect(() => {
     fetchBookings();
@@ -29,6 +32,7 @@ const BookingsPage = () => {
               _id
               title
               date
+              price
             }
           }
         }
@@ -110,15 +114,42 @@ const BookingsPage = () => {
       });
   };
 
-  return (
-    <React.Fragment>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <BookingList bookings={bookings} onCancel={cancelBookingHandler} />
-      )}
-    </React.Fragment>
-  );
+  const changeOutputTypeHandler = (outputType) => {
+    if (outputType === "list") {
+      setOutputType("list");
+    } else {
+      setOutputType("chart");
+    }
+  };
+
+  const tabs = () => {
+    return (
+      <React.Fragment>
+        <BookingControls
+          onChange={changeOutputTypeHandler}
+          activeOutputType={outputType}
+        />
+        <div>
+          {outputType === "list" ? (
+            <BookingList bookings={bookings} onCancel={cancelBookingHandler} />
+          ) : (
+            <BookingChart bookings={bookings} />
+          )}
+        </div>
+      </React.Fragment>
+    );
+  };
+
+  if (loading) {
+    return <Spinner />;
+  } else {
+    return tabs();
+  }
+  // return (
+  //   <React.Fragment>
+  //     {loading ? <Spinner /> : <React.Fragment>{tabs()}</React.Fragment>}
+  //   </React.Fragment>
+  // );
 };
 
 export default BookingsPage;

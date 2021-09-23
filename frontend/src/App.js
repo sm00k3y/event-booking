@@ -6,6 +6,7 @@ import BookingsPage from "./pages/Bookings";
 import EventsPage from "./pages/Events";
 import MainNavigation from "./components/Navigation/MainNavigation";
 import AuthContext from "./context/auth-context";
+import FoxPage from "./pages/FoxPage";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -30,6 +31,7 @@ function App() {
           <MainNavigation />
           <main className="main-content">
             <Switch>
+              <Route path="/foxy" component={FoxPage} />
               {token && <Redirect from="/" to="/events" exact />}
               {token && <Redirect from="/auth" to="/events" exact />}
               {!token && <Route path="/auth" component={AuthPage} />}

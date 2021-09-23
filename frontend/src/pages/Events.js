@@ -5,6 +5,7 @@ import "./Events.css";
 import authContext from "../context/auth-context";
 import EventList from "../components/Events/EventList";
 import Spinner from "../components/Spinner/Spinner";
+import Fox from "../components/Spinner/fox.svg";
 
 const EventsPage = () => {
   const [creating, setCreating] = useState(false);

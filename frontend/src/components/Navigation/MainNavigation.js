@@ -15,6 +15,9 @@ const MainNavigation = () => {
       <nav className="main-navigation__items">
         <ul>
           <li>
+            <NavLink to="/foxy">Fox</NavLink>
+          </li>
+          <li>
             <NavLink to="/events">Events</NavLink>
           </li>
           {loggedUser.token && (
